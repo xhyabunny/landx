@@ -11,7 +11,7 @@ export default function MainLayout({
 		<div className="flex overflow-hidden text-black dark:text-white">
 			<div className="main-container w-full">
 				<Header />
-				{children}
+				{children} 
 			</div>
 			<PromptConfigSidebar />
 		</div>
