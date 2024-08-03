@@ -24,14 +24,12 @@ const CopyTextSpan = ({ post } : { post: any }) => {
             }}
             className='h-7 w-full m-1 p-1 text-xs text-white/70 hover:text-white transition-all z-20 select-none'
         >
-            {truncateText(post.prompt, 31)}
+            {truncateText(post.prompt, 40)}
         </span>
     );
 };
 
 export default CopyTextSpan;
-
-const post = { prompt: "Example text to be copied to clipboard." };
 
 function truncateText(text:string, length:number) {
     return text.length > length ? text.substring(0, length) + '...' : text;

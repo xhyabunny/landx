@@ -3,6 +3,7 @@ import { setLike } from "@/app/api/posts/setLike"
 import { Heart, LoaderCircle } from "lucide-react"
 import { useState } from "react"
 import { Button } from "./button";
+import { getSession } from "@/app/api/session/getSession";
 
 interface LikeHandlerPageProps {
     setPost: React.Dispatch<React.SetStateAction<any | null>>;
@@ -14,6 +15,8 @@ export const LikeHandlerPage = ({ setPost, post }: LikeHandlerPageProps) => {
     
     const handleLike = async (id: string, type: boolean) => {
         setLoading(true);
+        let _ = await getSession(localStorage.getItem('session')!!)
+        if(!_.session || _.result !== 'done') return window.location.assign('/login')
         const response = await setLike(type, id, localStorage.getItem('username')!!);
         if (response.result === 'done') {
             setPost((prevPost:any) => 

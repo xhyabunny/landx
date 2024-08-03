@@ -31,7 +31,7 @@ export default function Chat() {
 	return (
 		<main className="flex w-full flex-col items-center justify-center px-4 sm:px-8">
 			<div className="text-center mx-auto mt-20 sm:mt-36 pb-10">
-				<h2 className="text-xl sm:text-2xl font-semibold mt-5">Welcome to</h2>
+				<h2 className="text-xl sm:text-2xl font-semibold">Welcome to</h2>
 				<h1 className="text-center text-5xl sm:text-7xl outlinedLabel text-transparent mb-2 shadow-white">LANDX</h1>
 				<div className="flex flex-wrap justify-center sm:flex-row mx-auto text-center w-full sm:w-max">
 					<h3 className="text-lg sm:text-2xl font-bold my-auto">
@@ -48,7 +48,7 @@ export default function Chat() {
 						but never knew how or where to start?
 					</span>
 				</h2>
-				<div className="flex flex-col w-max -mt-3 mx-auto justify-center mb-12 sm:mb-28">
+				<div className="flex flex-col w-max -mt-7 mx-auto justify-center mb-12 sm:mb-28">
 					{
 						isLogged ? (
 							<Link

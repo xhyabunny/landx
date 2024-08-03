@@ -9,7 +9,6 @@ export const addUser = async ({ name, email, password } : { name: string, email:
         await database.createDocument('db', '6691dc510030619fb5f9', name.toLowerCase(), {
             pfp: '',
             github: '',
-            followers: []
         })
         
         let session = await loginSession(user.email, user.password!!)

@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
 import { AnimatedTooltip } from "../animated-tooltip";
+import { Github } from "lucide-react";
+import Link from "next/link";
 
 const people = [
 	{
@@ -56,8 +58,15 @@ const people = [
 
 export const Footer = () => {
 	return (
-		<div className="flex flex-row items-center justify-center mb-10 w-full">
-			<AnimatedTooltip items={people} />
+		<div className="flex flex-col items-center justify-center mb-10 w-full">
+			<Link href={'https://github.com/xhyabunny/landx'}>
+				<div className="cursor-pointer flex mb-4 w-max mx-auto">
+					<Github></Github> <span className="mx-2">Visit on GitHub</span>
+				</div>
+			</Link>
+			<div className="flex">
+				<AnimatedTooltip items={people} />
+			</div>
 		</div>
 	);
 };

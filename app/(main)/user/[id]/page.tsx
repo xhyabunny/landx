@@ -3,11 +3,18 @@ import { getPost } from '@/app/api/posts/getPost'
 import { getUserPosts } from '@/app/api/posts/getUserPosts'
 import { getSession } from '@/app/api/session/getSession'
 import { getUser } from '@/app/api/users/getUser'
+import { updateUser } from '@/app/api/users/updateUser'
 import RelativeTimeConverter from '@/components/time-convert'
+import { BackgroundBeams } from '@/components/ui/background-beams'
+import { Button } from '@/components/ui/button'
 import { Canva } from '@/components/ui/canva'
 import FramerCanva from '@/components/ui/FramerCanva'
-import { LikeHandlerUser } from '@/components/ui/LikeHandlerUser'
+import { storage } from '@/utils/appwrite'
+import { setConfig } from '@/utils/userConfig'
+import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { ID } from 'appwrite'
+import { Image } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -40,14 +47,15 @@ export default function Page() {
     }, [hold]);
 
     useEffect(() => {
-        if(!localStorage.getItem('page')) {
+        if (!localStorage.getItem('page')) {
             localStorage.setItem('page', '0')
         }
 
         const fetchPosts = async () => {
             setIsLoading(true);
-            const response = await getUserPosts(userId!!);
-            const user = await getUser(localStorage.getItem("username")!!);
+            const _ = await getSession(localStorage.getItem('session')!!)
+            const user = await getUser(_.sessionInfo!!);
+            const response = await getUserPosts(user.user?.$id!!);
             if (response.result === "done") {
                 const postsWithLikes = response?.info?.map((post) => ({
                     ...post,
@@ -72,9 +80,9 @@ export default function Page() {
     useEffect(() => {
         async function fetchUser(userId: string) {
             try {
-                if(localStorage.getItem('session')) {
+                if (localStorage.getItem('session')) {
                     const user_ = await getSession(localStorage.getItem('session')!!)
-                    if(user_.sessionInfo === id) {
+                    if (user_.sessionInfo === id) {
                         setSelf(true)
                     } else {
                         setSelf(false)
@@ -100,28 +108,101 @@ export default function Page() {
         return <p>Loading...</p>
     }
 
+    const stackRetriever = (stack: string) => {
+        switch (stack) {
+            case "html":
+                return "Vanilla"
+            case "react":
+                return "Reactive"
+            case "nextjs":
+                return "Server rendered"
+        }
+    }
+
+    const updateProfile = async () => {
+        // Create a file input element
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+
+        // Trigger file input click
+        fileInput.click();
+
+        // Listen for file selection
+        fileInput.onchange = async () => {
+            if (fileInput.files && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                try {
+                    // Create a new file in the Appwrite storage
+                    const fileId = ID.unique(); // You can use a unique identifier or function to generate one
+                    const uploadResult = await storage.createFile('669eecb1002562e827cf', fileId, file);
+                    const user_ = await getSession(localStorage.getItem('session')!!)
+                    const userinfo_ = await getUser(user_.sessionInfo!!)
+                    // Get the file URL
+                    const fileUrl = storage.getFilePreview('669eecb1002562e827cf', uploadResult.$id);
+
+                    // Update the user profile with the new photo URL
+                    const response = await updateUser({profilePhoto: fileUrl.toString(), gitHub: userinfo_?.user?.github, userId: user_.sessionInfo!!});
+                    if (response.result === 'done') {
+                        setUser({ ...user, pfp: fileUrl }); // Update the local user state with the new photo URL
+                        window.location.reload()
+                    } else {
+                        console.error('Error updating profile:', response.result);
+                    }
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                }
+            }
+        };
+    };
+
     return (
-        <div className='mt-28 flex w-max mx-auto mb-3'>
-            <div className='flex flex-col'>
-                <div className='flex-col m-3 w-[30vw] h-max rounded-xl bg-black/10 dark:bg-white/10 p-5'>
+        <div className='mt-28 flex flex-col w-full lg:flex-row lg:w-max mx-auto mb-3'>
+            <div className='flex flex-col w-full lg:w-[30vw]'>
+                <div className='flex-col m-3 h-max rounded-xl bg-black/10 dark:bg-white/10 p-5'>
                     <h1 className='text-4xl text-center font-extrabold mt-auto'>{user.$id}{isSelf === true ? ' (You)' : null}</h1>
                     <img src={user.pfp ? user.pfp : "/unknown.png"} className='h-36 w-36 rounded-full mx-auto mt-5'></img>
-                </div>
-                <div className='flex-col m-3 w-[30vw] h-max rounded-xl bg-black/10 dark:bg-white/10 p-5'>
-                    <Link target='_blank' href={user.github}>
-                        <h2 className='text-gray-800 hover:text-gray-400 dark:hover:text-white dark:text-gray-400 transition-all cursor-pointer'>{user.github}</h2>
-                    </Link>
-                </div>
-            </div>
-            <div className='flex-col m-3 w-[60vw] rounded-xl bg-black/10 dark:bg-white/10 p-5'>
-                {holdPost && (
-                    <div className="w-full">
-                        <FramerCanva post={holdPost}></FramerCanva>
+                    <div className='w-full flex -mt-7 ml-12'>
+                        {
+                            isSelf === true && (
+                                <Button onClick={updateProfile} className='mx-auto bg-white rounded-full'><Image></Image></Button>
+                            )
+                        }
                     </div>
-                )}
+                </div>
+                <div className='flex-col m-3 h-max rounded-xl bg-black/10 dark:bg-white/10 p-5'>
+                    {
+                        user.github !== '' ? (
+                            <Link className='flex w-full' target='_blank' href={user.github !== '' ? user.github : ''}>
+                                <GitHubLogoIcon className='w-7 h-7 my-auto mx-3'></GitHubLogoIcon>
+                                <h2 className='my-auto text-gray-800 hover:text-gray-400 dark:hover:text-white dark:text-gray-400 transition-all cursor-pointer w-max'>{user.github}</h2>
+                            </Link>
+                        ) : (
+                            <h2 className='text-gray-800 hover:text-gray-400 dark:hover:text-white dark:text-gray-400 transition-all'>No github found for user</h2>
+                        )
+                    }
+                </div>
+                {
+                    isSelf === true && (
+                        <div className='flex-col m-3 h-max rounded-xl bg-black/10 dark:bg-white/10 p-5'>
+                            <h1 className='text-xl font-bold'>Settings</h1>
+                            <div className='mt-2'>
+                                <input
+                                    defaultChecked={(JSON.parse(localStorage.getItem('settings')!!)?.config?.clickToLoad!!) ?? true}
+                                    onChange={(e) => { setConfig({ clickToLoad: e.target.checked }) }}
+                                    type='checkbox'
+                                    className='p-1'
+                                ></input>
+                                <span className='p-1'>Click to load preview</span>
+                            </div>
+                        </div>
+                    )
+                }
+            </div>
+            <div className='flex-col m-3 lg:w-[60vw] rounded-xl bg-black/10 dark:bg-white/10 p-5'>
                 {posts.length >= 1 ? (
                     <div className="flex flex-col">
-                        <div className="flex gap-1 w-[100%] pl-[28.2em] overflow-auto overflow-y-hidden justify-center items-center">
+                        <div className="flex gap-1 w-full sideBarOverflowX pb-3 pl-[29em] overflow-auto overflow-y-hidden justify-center items-center">
                             {posts.map((post: any) => (
                                 <div
                                     onMouseEnter={() => setHold(post.$id)}
@@ -140,21 +221,19 @@ export default function Page() {
                                             <div onClick={() => { window.location.assign("/land/" + post.$id); }} className="px-2 cursor-pointer">
                                                 <div className="relative">
                                                     <div className="flex absolute top-2 right-1.5 z-10">
-                                                        {post.stack.map((stack: any) => (
-                                                            <Tooltip.Provider key={stack}>
-                                                                <Tooltip.Root>
-                                                                    <Tooltip.Trigger>
-                                                                        <img className="w-6 h-6 hover:w-7 hover:h-7 transition-all mr-1" src={`https://skillicons.dev/icons?i=${stack}`} alt={`${stack} icon`} />
-                                                                    </Tooltip.Trigger>
-                                                                    <Tooltip.Portal>
-                                                                        <Tooltip.Content side="bottom">
-                                                                            <Tooltip.Arrow className="opacity-40" />
-                                                                            <span className="bg-black/40 text-white m-1 p-[0.17em] px-2 rounded-lg">{stack}</span>
-                                                                        </Tooltip.Content>
-                                                                    </Tooltip.Portal>
-                                                                </Tooltip.Root>
-                                                            </Tooltip.Provider>
-                                                        ))}
+                                                        <Tooltip.Provider>
+                                                            <Tooltip.Root>
+                                                                <Tooltip.Trigger>
+                                                                    <img className="w-6 h-6 hover:w-7 hover:h-7 transition-all mr-1" src={`https://skillicons.dev/icons?i=${post.stack}`} alt={`${post.stack} icon`} />
+                                                                </Tooltip.Trigger>
+                                                                <Tooltip.Portal>
+                                                                    <Tooltip.Content side="bottom">
+                                                                        <Tooltip.Arrow className="opacity-40" />
+                                                                        <span className="bg-black/40 text-white m-1 p-[0.17em] px-2 rounded-lg">{stackRetriever(post.stack)}</span>
+                                                                    </Tooltip.Content>
+                                                                </Tooltip.Portal>
+                                                            </Tooltip.Root>
+                                                        </Tooltip.Provider>
                                                     </div>
                                                     <Canva post={post}></Canva>
                                                 </div>
@@ -174,7 +253,23 @@ export default function Page() {
                 ) : (
                     <h3 className="text-center">No landing pages were found...</h3>
                 )}
+                {holdPost && (
+                    <div className="w-full">
+                        <FramerCanva bool={(JSON.parse(localStorage.getItem('settings')!!)?.config?.clickToLoad!!) ?? true} post={holdPost}></FramerCanva>
+                    </div>
+                )}
+                {!holdPost && (
+                    <div className='w-full h-[400] my-4 flex flex-col bg-black/5 rounded-lg dark:bg-[#0D0613]/30'>
+                        <div className='my-auto'>
+                            <h1 className="dark:mt-1.5 text-center text-2xl sm:text-3xl text-black dark:text-white shadow-white">LANDX</h1>
+                            <h1 className="text-center text-xl sm:text-1xl text-black dark:text-white shadow-white">Hover on a project to preview.</h1>
+                            <img src='/buffer-dark.gif' className='opacity-0 dark:opacity-100 dark:mt-5 mx-auto w-10 h-5 object-cover text-center justify-center'></img>
+                            <img src='/buffer-light.gif' className='opacity-100 dark:opacity-0 mx-auto w-10 h-5 object-cover text-center justify-center'></img>
+                        </div>
+                    </div>
+                )}
             </div>
+            <BackgroundBeams className='z-[-20]'></BackgroundBeams>
         </div>
     )
 }

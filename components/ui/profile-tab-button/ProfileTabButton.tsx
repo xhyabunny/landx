@@ -31,7 +31,7 @@ export function ProfileTabButton() {
 					<span className="sr-only">User settings</span>
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
+			<DropdownMenuContent className="z-[1000]" align="end">
 				{
 					session ? (
 						<>
@@ -47,11 +47,11 @@ export function ProfileTabButton() {
 				{
 					session ? (
 						<>
-						<Link href="/create">
-							<DropdownMenuItem>Create</DropdownMenuItem>
-						</Link>
 						<Link href={"/user/"+user}>
 							<DropdownMenuItem>Profile</DropdownMenuItem>
+						</Link>
+						<Link href='/logout'>
+							<DropdownMenuItem>Log out</DropdownMenuItem>
 						</Link>
 						</>
 					) : (

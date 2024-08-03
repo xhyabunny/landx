@@ -2,22 +2,20 @@ import { database } from "@/utils/appwrite";
 import { ID } from "appwrite";
 
 interface Props {
-    author: string;
+    author: string | undefined;
     name: string;
     pfp: string | null;
-    github: string | null;
     description: string;
     data: string;
-    primary__color: string;
-    secondary__color: string;
-    font__style: string;
+    colors: string[];
+    fonts: string[];
     font__weight: string;
     page__style: string;
-    stack: string[];
+    stack: string;
     prompt: string;
 }
 
-export const addPost = async ({ data } : { data: Props }) => {
+export const addPost = async (data : Props) => {
 
     try {
 
@@ -26,12 +24,10 @@ export const addPost = async ({ data } : { data: Props }) => {
             likes: 0,
             name: data.name,
             pfp: data.pfp,
-            github: data.github,
             description: data.description,
             data: data.data,
-            primary__color: data.primary__color,
-            secondary__color: data.secondary__color,
-            font__style: data.font__style,
+            colors: data.colors,
+            fonts: data.fonts,
             font__weight: data.font__weight,
             page__style: data.page__style,
             stack: data.stack,

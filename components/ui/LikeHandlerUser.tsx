@@ -16,7 +16,6 @@ export const LikeHandlerUser: React.FC<LikeHandlerUserProps> = ({ setPosts, post
         setLoading(true);
         try {
             const response = await setLike(type, id, localStorage.getItem('username')!!);
-            console.log('Response from setLike:', response); // Log the response
 
             if (response.result === 'done') {
                 setPosts((prevPosts: any) => 

@@ -19,27 +19,7 @@ export function InputApiKey() {
 
 		if (api.trim() === "" || apiKey.trim() === "") return;
 		saveApi({ apiProvider: api, apiKey: apiKey });
-
-		// COMENTE ESTE CÓDIGO POR QUE CREO QUE NO ES NECESARIO MANDAR EL API_KEY
-		// A UN ROUTE HANDLER DISTINTO AL DE CHAT...
-		// await fetch("/api/api-key", {
-		// 	method: "POST",
-		// 	headers: {
-		// 		"Content-Type": "application/json",
-		// 	},
-		// 	body: JSON.stringify({
-		// 		apiKey,
-		// 		api,
-		// 	}),
-		// })
-		// 	.then((res) => res.json())
-		// 	.then((data) => {
-		// 		console.log(data);
-		// 	})
-		// 	.catch((error) => {
-		// 		console.error("Error:", error);
-		// 	});
-	};
+	}
 
 	return (
 		<form

@@ -51,7 +51,6 @@ export function PromptConfigSidebar() {
 		}
 
 		savePromptConfig(formData);
-		setFormData(initialFormData);
 	};
 
 	useEffect(() => {

@@ -12,6 +12,7 @@ import { Canva } from "@/components/ui/canva";
 import { LikeHandler } from "@/components/ui/LikeHandler";
 import FramerCanva from "@/components/ui/FramerCanva";
 import { getPost } from "@/app/api/posts/getPost";
+import { getSession } from "@/app/api/session/getSession";
 
 const POSTS_PER_PAGE = 3;
 
@@ -22,6 +23,13 @@ export default function Page() {
   const [page, setPage] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const savedSettings = localStorage.getItem('settings');
+  const parsedSettings = savedSettings ? JSON.parse(savedSettings) : {
+      config: {
+          clickToLoad: true
+      }
+  };
 
   function truncateText(text: string, maxLength: number) {
     if (text.length <= maxLength) {
@@ -41,14 +49,15 @@ export default function Page() {
   }, [hold]);
 
   useEffect(() => {
-    if(!localStorage.getItem('page')) {
+    if (!localStorage.getItem('page')) {
       localStorage.setItem('page', '0')
     }
 
     const fetchPosts = async () => {
       setIsLoading(true);
       const response = await getPosts("newest", POSTS_PER_PAGE * page);
-      const user = await getUser(localStorage.getItem("username")!!);
+      const _ = await getSession(localStorage.getItem('session')!!)
+      const user = await getUser(_.sessionInfo!!);
       if (response.result === "done") {
         setTotal(response?.total!!);
         const postsWithLikes = response?.info?.map((post: any) => ({
@@ -66,6 +75,17 @@ export default function Page() {
   }, [page]);
 
   const totalPages = Math.ceil(total / POSTS_PER_PAGE);
+
+  const stackRetriever = (stack: string) => {
+    switch (stack) {
+      case "Vanilla":
+        return "js"
+      case "React":
+        return "react"
+      default: 
+        return ""
+    }
+  }
 
   return (
     <main className="mt-28 mx-8">
@@ -133,21 +153,19 @@ export default function Page() {
                         <div onClick={() => { window.location.assign("/land/" + post.$id); }} className="px-2 cursor-pointer">
                           <div className="relative">
                             <div className="flex absolute top-2 right-1.5 z-10">
-                              {post.stack.map((stack: any) => (
-                                <Tooltip.Provider key={stack}>
-                                  <Tooltip.Root>
-                                    <Tooltip.Trigger>
-                                      <img className="w-6 h-6 hover:w-7 hover:h-7 transition-all mr-1" src={`https://skillicons.dev/icons?i=${stack}`} alt={`${stack} icon`} />
-                                    </Tooltip.Trigger>
-                                    <Tooltip.Portal>
-                                      <Tooltip.Content side="bottom">
-                                        <Tooltip.Arrow className="opacity-40" />
-                                        <span className="bg-black/40 text-white m-1 p-[0.17em] px-2 rounded-lg">{stack}</span>
-                                      </Tooltip.Content>
-                                    </Tooltip.Portal>
-                                  </Tooltip.Root>
-                                </Tooltip.Provider>
-                              ))}
+                              <Tooltip.Provider>
+                                <Tooltip.Root>
+                                  <Tooltip.Trigger>
+                                    <img className="w-6 h-6 hover:w-7 hover:h-7 transition-all mr-1" src={`https://skillicons.dev/icons?i=${stackRetriever(post.stack)}`} alt={`${post.stack} icon`} />
+                                  </Tooltip.Trigger>
+                                  <Tooltip.Portal>
+                                    <Tooltip.Content side="bottom">
+                                      <Tooltip.Arrow className="opacity-40" />
+                                      <span className="bg-black/40 text-white m-1 p-[0.17em] px-2 rounded-lg">{post.stack}</span>
+                                    </Tooltip.Content>
+                                  </Tooltip.Portal>
+                                </Tooltip.Root>
+                              </Tooltip.Provider>
                             </div>
                             <Canva post={post}></Canva>
                           </div>
@@ -165,7 +183,17 @@ export default function Page() {
               </div>
               {holdPost && (
                 <div className="w-full">
-                  <FramerCanva post={holdPost}></FramerCanva>
+                  <FramerCanva bool={(JSON.parse(localStorage.getItem('settings')!!)?.config?.clickToLoad!!) ?? true} post={holdPost}></FramerCanva>
+                </div>
+              )}
+              {!holdPost && (
+                <div className='w-full h-[400] my-4 flex flex-col bg-black/5 rounded-lg dark:bg-[#0D0613]/30'>
+                  <div className='my-auto'>
+                    <h1 className="dark:mt-1.5 text-center text-2xl sm:text-3xl text-black dark:text-white shadow-white">LANDX</h1>
+                    <h1 className="text-center text-xl sm:text-1xl text-black dark:text-white shadow-white">Hover on a project to preview.</h1>
+                    <img src='/buffer-dark.gif' className='opacity-0 dark:opacity-100 dark:mt-5 mx-auto w-10 h-5 object-cover text-center justify-center'></img>
+                    <img src='/buffer-light.gif' className='opacity-100 dark:opacity-0 mx-auto w-10 h-5 object-cover text-center justify-center'></img>
+                  </div>
                 </div>
               )}
             </div>

@@ -1,80 +1,43 @@
-import { promises as fs } from "fs";
-import path from "path";
-
 export async function POST(req: Request) {
-	const {
-		aiResponse: { text },
-	}: { aiResponse: { text: string } } = await req.json();
+    try {
+        const { generation, promptConfig, author } = await req.json();
 
-	const codeSections: { language: string; code: string }[] = [];
+        // Regex para manejar tres backticks, nombre del archivo y contenido
+        const regex = /```([^`]+?)\n([\s\S]*?)```/g;
+        const result: { [key: string]: string } = {};
 
-	console.log('codeSections: ', codeSections)
+        let match;
+        while ((match = regex.exec(generation)) !== null) {
 
-	const lines = text.split("\n");
-	let currentLanguage = "";
+            const [_, fileName, content] = match;
 
-	console.log("lines", lines);
+            if (fileName && content) {
+                result[fileName.trim()] = content.trim();
+            } else {
+                console.error('Unexpected match format:', match);
+            }
+        }
 
-	lines.forEach((line) => {
-		if (line.startsWith("```")) {
-			currentLanguage = line.substring(3, line.length).trim();
-			// Detectar el tipo de lenguaje (ej. css, javaScript, README...)
-			const endIndex = lines.indexOf("```", lines.indexOf(line) + 1);
+        switch (promptConfig.tech__stack) {
+            case "React":
+                break;
+            case "Vanilla":
+                result['package.json'] = JSON.stringify({
+                    name: promptConfig.landing__name.toLowerCase().split(' ').join('-') || "myProj-" + crypto.randomUUID().toString(),
+                    author: author,
+                    scripts: { "start": "npm i && npx http-server -c-1 ." },
+                    dependencies: { "http-server": "^14.0.0" },
+                    stackblitz: { "installDependencies": true, "startCommand": "npm start" },
+                }, null, 2);
+                break;
+        }
 
-			if (endIndex !== -1) {
-				const codeLines = lines.slice(lines.indexOf(line) + 1, endIndex);
-				const code = codeLines.join("\n").trim();
-				if (currentLanguage && code) {
-					codeSections.push({ language: currentLanguage, code });
-				}
-				currentLanguage = "";
-			}
-		}
-	});
-
-	console.log('currentLanguage: ', currentLanguage)
-
-	// Ruta de la carpeta donde se guardan los archivos
-	const outputDir = path.join(process.cwd(), "public", "generated");
-	await fs.mkdir(outputDir, { recursive: true });
-
-	// Eliminar todos los archivos en la carpeta 'public/generated'
-	try {
-		const files = await fs.readdir(outputDir);
-		const deletePromises = files.map((file) =>
-			fs.unlink(path.join(outputDir, file))
-		);
-		await Promise.all(deletePromises);
-	} catch (error) {
-		console.error("Error al eliminar los archivos:", error);
-	}
-
-	// Crear los nuevos archivos y guardarlos en la carpeta
-	const filePromises = codeSections.map(({ language, code }) => {
-		const fileName = `${
-			language === "svg"
-				? "img"
-				: language === "css"
-				? "styles"
-				: language === "javascript"
-				? "script"
-				: language === "html"
-				? "index"
-				: language
-		}.${language === "javascript" ? "js" : language}`;
-
-		// console.log("fileName", fileName);
-		const filePath = path.join(outputDir, fileName);
-		// index.html
-		return fs.writeFile(filePath, code);
-
-		// language y code
-	});
-
-	await Promise.all(filePromises);
-
-	// console.log("codeSections", codeSections);
-	// console.log("text", text);
-
-	return Response.json({ aiResponse: text });
+        return new Response(JSON.stringify(result), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        console.error('Error processing request:', error);
+        return new Response('Internal Server Error', { status: 500 });
+    }
 }

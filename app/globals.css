@@ -5,7 +5,7 @@
 @layer base {
 	:root {
 		--select-border: #ffffff;
-		--select-focus: rgba(239, 239, 255, 0.933);
+		--select-focus: rgba(255, 255, 255, 0.385);
 		--select-arrow: var(--select-border);
 		  
 		--background: 273 100% 95%;
@@ -255,16 +255,17 @@ h1 {
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
+	
 }
 
 .colorSelector::-webkit-color-swatch {
 	border-radius: 15px;
-	border: solid 2px black;
+	border-color: transparent;
 }
 
 .colorSelector::-moz-color-swatch {
 	border-radius: 15px;
-	border: solid 2px black;
+	border-color: transparent;
 }
 
 .green-text {
@@ -296,4 +297,24 @@ h1 {
 	100% {
 		background-color: rgb(156 163 175 / var(--tw-text-opacity));
 	}
+}
+
+.sideBarOverflow::-webkit-scrollbar {
+	width: 5px;
+	background-color: rgba(255, 255, 255, 0.4);
+}
+
+.sideBarOverflow::-webkit-scrollbar-thumb {
+	background-color: var(--accent-foreground);
+}
+
+.sideBarOverflowX::-webkit-scrollbar {
+	height: 7px;
+	border-radius: 40px;
+	background-color: rgba(255, 255, 255, 0.159);
+}
+
+.sideBarOverflowX::-webkit-scrollbar-thumb {
+	background-color: rgba(255, 255, 255, 0.29);
+	border-radius: 40px;
 }

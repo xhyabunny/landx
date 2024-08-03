@@ -24,6 +24,7 @@ export default function Page() {
     password: ""
   });
   const [reg, setReg] = useState(true);
+  const [error, setError] = useState<any>(null);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -47,9 +48,11 @@ export default function Page() {
             localStorage.setItem('session', result.sessionId!!)
             localStorage.setItem('username', result.user!!)
             window.location.assign('/create')
+          } else {
+            setError(result?.result)
           }
         } catch (error) {
-          console.log(error)
+          setError(error)
         }
       } else {
         try {
@@ -58,9 +61,11 @@ export default function Page() {
             localStorage.setItem('session', result.info!!)
             localStorage.setItem('username', result.user!!)
             window.location.assign('/create')
+          } else {
+            setError(result?.result)
           }
         } catch (error) {
-          console.log(error)
+          setError(error)
         }
       }
       // Manejo de éxito, como redireccionar o mostrar un mensaje
@@ -118,6 +123,7 @@ export default function Page() {
           {reg ? 'I already have an account!' : `I don't have an account.`}
         </h6>
       </fieldset>
+      <h4 style={{display: error !== null ? 'flex' : 'none'}} className="text-red-400 mt-2">{error?.toString().slice(19, error.toString().length)}</h4>
       <BackgroundBeams className="z-[-90]" />
     </form>
   );

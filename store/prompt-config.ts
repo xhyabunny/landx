@@ -8,9 +8,9 @@ export const initialFormData: FormData = {
 	user__email: "",
 	style__colors: ["#1e90ff", "#ffffff"],
 	style__fontFamilies: ["Arial", "Helvetica"],
-	style__landingDesign: "Modern",
+	style__landingDesign: "minimalist",
 	style__fontWeight: 400,
-	tech__stack: "Vanilla",
+	tech__stack: "React",
 };
 
 const initialApi: Api = {

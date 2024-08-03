@@ -30,8 +30,8 @@ export const LikeHandler = ({ setPosts, post } : { setPosts:any, post: any }) =>
                     <>
                         {
                             post.liked ? 
-                            <Heart onClick={()=>{handleLike(post.$id, false)}} className='my-auto cursor-pointer h-4 w-4 stroke-red-500 fill-red-500 dark:stroke-white dark:fill-white dark:hover:stroke-gray-400 dark:hover:fill-gray-400 hover:stroke-red-400 hover:fill-red-400 transition-all'></Heart> :
-                            <Heart onClick={()=>{handleLike(post.$id, true)}} className='my-auto cursor-pointer h-4 w-4 dark:stroke-gray-400 dark:hover:stroke-red-500 hover:stroke-red-500 transition-all'></Heart>
+                            <Heart onClick={()=>{handleLike(post.$id, false)}} className='my-auto cursor-pointer h-4 w-4 stroke-red-500 fill-red-500 hover:stroke-red-400 hover:fill-red-400 transition-all'></Heart> :
+                            <Heart onClick={()=>{handleLike(post.$id, true)}} className='my-auto cursor-pointer h-4 w-4 dark:hover:stroke-red-500 hover:stroke-red-500 transition-all'></Heart>
                         }
                         <span className='my-auto text-xs pl-1'>{post.likes}</span>
                     </>

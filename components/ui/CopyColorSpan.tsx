@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CopyColorSpan = ({ color, left }: { color:string, left:number }) => {
+const CopyColorSpan = ({ color }: { color:string }) => {
     const [clicked, setClicked] = useState(false);
 
     return (
@@ -22,8 +22,7 @@ const CopyColorSpan = ({ color, left }: { color:string, left:number }) => {
                     navigator.clipboard.writeText(color);
                 }
             }}
-            style={{ left: left }}
-            className='absolute bottom-2 m-2 bg-gray-500/15 hover:bg-gray-500/30 h-7 w-7 p-1 opacity-0 group-hover:opacity-100 transition-all'
+            className='relative m-1 ml-2 mt-1 bg-gray-500/15 hover:bg-gray-500/30 h-7 w-7 p-1 opacity-0 group-hover:opacity-100 transition-all'
         >
             <div className='p-1 h-full w-full' style={{ backgroundColor: color }}></div>
         </div>
