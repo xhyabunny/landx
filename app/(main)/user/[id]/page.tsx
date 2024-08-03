@@ -251,7 +251,7 @@ export default function Page() {
                         </div>
                     </div>
                 ) : (
-                    <h3 className="text-center">No landing pages were found...</h3>
+                    <h3 className="text-center">No landing pages were found...</h3> 
                 )}
                 {holdPost && (
                     <div className="w-full">
