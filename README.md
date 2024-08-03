@@ -1,6 +1,10 @@
 # ![Alt text](/public/landx-banner.png "a title")
 # ![Alt text](/public/favicon_md4.png "a title") Welcome to LandX
 
+### What is it all about? 🧐
+LandX is a Landing page generator using the Vercel AI SDK made for the Vercel Hackathon tied to Midudev.
+Select between colors, fonts, styles, and even tech stacks like react or vanillaJS!
+
 ### Storytelling: 📖
 This project started from scratch on July 9th 2024, the day after Midu announced the Vercel Hackathon on Twitch. We have gathered 8 followers of Midu, where through Telegram we made contact and we got together to carry out this wonderful project.
 
