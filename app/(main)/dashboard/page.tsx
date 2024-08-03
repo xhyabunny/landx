@@ -55,7 +55,7 @@ export default function Page() {
     if (isClient && !localStorage.getItem('page')) {
       localStorage.setItem('page', '0');
     }
-
+ 
     const fetchPosts = async () => {
       setIsLoading(true);
       const response = await getPosts("newest", POSTS_PER_PAGE * page);
