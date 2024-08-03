@@ -24,11 +24,14 @@ export default function Page() {
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const savedSettings = localStorage.getItem('settings');
+  // Check if running on the client
+  const isClient = typeof window !== "undefined";
+
+  const savedSettings = isClient ? localStorage.getItem('settings') : null;
   const parsedSettings = savedSettings ? JSON.parse(savedSettings) : {
-      config: {
-          clickToLoad: true
-      }
+    config: {
+      clickToLoad: true
+    }
   };
 
   function truncateText(text: string, maxLength: number) {
@@ -49,15 +52,15 @@ export default function Page() {
   }, [hold]);
 
   useEffect(() => {
-    if (!localStorage.getItem('page')) {
-      localStorage.setItem('page', '0')
+    if (isClient && !localStorage.getItem('page')) {
+      localStorage.setItem('page', '0');
     }
 
     const fetchPosts = async () => {
       setIsLoading(true);
       const response = await getPosts("newest", POSTS_PER_PAGE * page);
-      const _ = await getSession(localStorage.getItem('session')!!)
-      const user = await getUser(_.sessionInfo!!);
+      const _ = isClient ? await getSession(localStorage.getItem('session')!!) : null;
+      const user = _?.sessionInfo ? await getUser(_.sessionInfo!!) : null;
       if (response.result === "done") {
         setTotal(response?.total!!);
         const postsWithLikes = response?.info?.map((post: any) => ({
@@ -79,11 +82,11 @@ export default function Page() {
   const stackRetriever = (stack: string) => {
     switch (stack) {
       case "Vanilla":
-        return "js"
+        return "js";
       case "React":
-        return "react"
+        return "react";
       default: 
-        return ""
+        return "";
     }
   }
 
@@ -109,7 +112,7 @@ export default function Page() {
                   onClick={(e) => {
                     if (page > 0) {
                       setPage((prev) => prev - 1);
-                      localStorage.setItem("page", (page - 1).toString());
+                      if (isClient) localStorage.setItem("page", (page - 1).toString());
                     }
                   }}
                   className={`bg-black/5 disabled:text-black/10 dark:disabled:text-white/50 dark:bg-gray-300/10 dark:disabled:bg-gray-300/5 h-7 w-7 rounded-full my-auto ${page <= 0 ? "cursor-not-allowed opacity-50" : ""}`}
@@ -122,7 +125,7 @@ export default function Page() {
                   onClick={(e) => {
                     if (page < totalPages - 1) {
                       setPage((prev) => prev + 1);
-                      localStorage.setItem("page", (page + 1).toString());
+                      if (isClient) localStorage.setItem("page", (page + 1).toString());
                     }
                   }}
                   className={`bg-black/5 disabled:text-black/10 dark:disabled:text-white/50 dark:bg-gray-300/10 dark:disabled:bg-gray-300/5 h-7 w-7 rounded-full my-auto ${page >= totalPages - 1 ? "cursor-not-allowed opacity-50" : ""}`}
@@ -183,7 +186,7 @@ export default function Page() {
               </div>
               {holdPost && (
                 <div className="w-full">
-                  <FramerCanva bool={(JSON.parse(localStorage.getItem('settings')!!)?.config?.clickToLoad!!) ?? true} post={holdPost}></FramerCanva>
+                  <FramerCanva bool={(parsedSettings?.config?.clickToLoad) ?? true} post={holdPost}></FramerCanva>
                 </div>
               )}
               {!holdPost && (
