@@ -185,7 +185,7 @@ export default function Page() {
                 ))}
               </div>
               {holdPost && (
-                <div className="w-full">
+                <div className="w-[70vw] mx-auto">
                   <FramerCanva bool={(parsedSettings?.config?.clickToLoad) ?? true} post={holdPost}></FramerCanva>
                 </div>
               )}

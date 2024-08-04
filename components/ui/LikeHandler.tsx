@@ -1,5 +1,6 @@
 "use client"
 import { setLike } from "@/app/api/posts/setLike"
+import { getSession } from "@/app/api/session/getSession"
 import { Heart, LoaderCircle } from "lucide-react"
 import { useState } from "react"
 
@@ -9,6 +10,8 @@ export const LikeHandler = ({ setPosts, post } : { setPosts:any, post: any }) =>
 
     const handleLike = async (id: string, type: boolean) => {
         setLoading(true);
+        const session = await getSession(localStorage.getItem('session')!!)
+        if(session.result !== 'done' || !session.sessionInfo) return window.location.assign('/login')
         const response = await setLike(type, id, localStorage.getItem('username')!!);
         if (response.result === 'done') {
             setPosts((prevPosts: any) => 
