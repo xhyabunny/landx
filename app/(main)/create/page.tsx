@@ -295,6 +295,7 @@ export default function Page() {
 								}}
 							></PlaceholdersAndVanishInput>
 							<InputApiKey />
+							<p className="text-xs opacity-30 mt-3">Click on the right-pointed arrow to save your api key.</p>
 						</>
 					)
 				}

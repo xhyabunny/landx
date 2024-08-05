@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 export function PromptConfigSidebar() {
 	const [sectionSelected, setSectionSelected] = useState<string>("business");
 	const [formData, setFormData] = useState<FormData>(initialFormData);
+	const [txt, setTxt] = useState<string>('Save')
 	const savePromptConfig = usePromptConfigStore(
 		(state) => state.savePromptConfig
 	);
@@ -48,6 +49,12 @@ export function PromptConfigSidebar() {
 		} else if (sectionSelected === "style") {
 			handleSectionChange("tech");
 			return;
+		}
+
+		if(sectionSelected === "tech")
+		{
+			setTxt('Saved')
+			setTimeout(()=>{setTxt('Save')}, 1500)
 		}
 
 		savePromptConfig(formData);
@@ -95,12 +102,13 @@ export function PromptConfigSidebar() {
 				/>
 			</section>
 
-			<footer className="absolute bottom-8 w-full h-[50px] flex justify-center">
+			<footer className="absolute bottom-3 w-full h-[53px] flex flex-col justify-center">
 				<button
 					className={`
 						w-[90%]
 						h-[48px]
 						font-bold
+						mx-auto
 						rounded-sm
 						transition-all
 						text-white
@@ -108,8 +116,9 @@ export function PromptConfigSidebar() {
 					`}
 					onClick={handleSend}
 				>
-					{sectionSelected !== "tech" ? "Continue" : "Save"}
+					{sectionSelected !== "tech" ? "Continue" : txt}
 				</button>
+				<p className="text-xs w-max h-max p-0 m-0 mt-2 text-center mx-auto">Make sure to Save your settings before prompting !!</p>
 			</footer>
 		</aside>
 	);

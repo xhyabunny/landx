@@ -1,7 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { Api } from "@/types";
-import { qualityPrompt } from "@/utils";
 
 interface ReqType {
   prompt: string;
@@ -84,7 +83,7 @@ content of file
       // Free provider logic
       const groq = createOpenAI({
         baseURL: "https://api.groq.com/openai/v1",
-        apiKey: process.env.GROQ_API_KEY,
+        apiKey: api.apiKey || process.env.GROQ_API_KEY,
       });
       const response = await generateText({
         model: groq("llama3-8b-8192"),

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { ArrowRightIcon, EyeIcon, EyeOffIcon } from "lucide-react";
 import { usePromptConfigStore } from "@/store/prompt-config";
 
 export function InputApiKey() {
@@ -13,12 +13,23 @@ export function InputApiKey() {
 	const [api, setApi] = useState("OpenAI");
 	const [visible, setVisible] = useState(false);
 	const saveApi = usePromptConfigStore((state) => state.saveApi);
+	const arrow = useRef<SVGSVGElement>(null)
 
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		if (api.trim() === "" || apiKey.trim() === "") return;
 		saveApi({ apiProvider: api, apiKey: apiKey });
+	}
+
+	const handleAnim = () => {
+		if (!arrow.current) return 
+		arrow.current.style.rotate = '-90deg'
+		arrow.current.style.backgroundColor = '#77FF88'
+		setTimeout(()=>{
+			arrow!!.current!!.style.rotate = '0deg'
+			arrow!!.current!!.style.backgroundColor = 'transparent'
+		}, 1000)
 	}
 
 	return (
@@ -50,7 +61,7 @@ export function InputApiKey() {
 			/>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
-					<span className="mt-1.5 w-28 text-end cursor-pointer relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-4 pr-4">
+					<span className="mt-1.5 w-28 text-end cursor-pointer relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0">
 						{api} ↓
 					</span>
 				</DropdownMenuTrigger>
@@ -84,6 +95,9 @@ export function InputApiKey() {
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
+			<button type="submit" className="px-3">
+				<ArrowRightIcon ref={arrow} onClick={handleAnim} className="w-4 h-4 transition-all rounded-full"></ArrowRightIcon>
+			</button>
 		</form>
 	);
 }
