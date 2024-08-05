@@ -238,11 +238,11 @@ export default function Page() {
                                                     <Canva post={post}></Canva>
                                                 </div>
                                                 <h2 className="group-hover:mt-1 mt-[-2em] font-black transition-all mix-blend-difference text-white text-lg px-2.5 w-full overflow-hidden whitespace-nowrap group-hover:font-normal">
-                                                    {truncateText(post.name, 27)}
+                                                    {truncateText(post.name || 'Unnamed project', 27)}
                                                 </h2>
                                             </div>
                                             <div className="h-0 group-hover:h-10 transition-all px-2 mb-1.5 group-hover:mb-[-0.6em] overflow-hidden">
-                                                <h3 className="text-xs text-gray-500 px-2.5 p-0">{post.description}</h3>
+                                                <h3 className="text-xs text-gray-500 px-2.5 p-0">{post.description || 'Unnamed project from a LANDX User.'}</h3>
                                             </div>
                                         </div>
                                     </div>
