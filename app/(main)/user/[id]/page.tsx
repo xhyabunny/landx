@@ -259,7 +259,7 @@ export default function Page() {
                     </div>
                 )}
                 {!holdPost && (
-                    <div className='w-full h-[400] my-4 flex flex-col bg-black/5 rounded-lg dark:bg-[#0D0613]/30'>
+                    <div className='w-full h-[25em] my-4 flex flex-col bg-black/5 rounded-lg dark:bg-[#0D0613]/30'>
                         <div className='my-auto'>
                             <h1 className="dark:mt-1.5 text-center text-2xl sm:text-3xl text-black dark:text-white shadow-white">LANDX</h1>
                             <h1 className="text-center text-xl sm:text-1xl text-black dark:text-white shadow-white">Hover on a project to preview.</h1>
