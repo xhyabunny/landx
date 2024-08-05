@@ -58,13 +58,17 @@ export default function Page() {
 		try {
 			let session = await getSession(localStorage.getItem('session')!!)
 			let u = await getUser(session.sessionInfo!!);
+			if(!vm) return setIsLoading(false);
+
+			// Define archivos y su contenido de manera dinámica
+			const files_ = await vm.getFsSnapshot();
 
 			await addPost({
 				author: u.user?.$id,
 				name: promptConfig.landing__name,
 				pfp: u?.user?.pfp || '/unknown.png',
 				description: promptConfig.landing__description,
-				data: JSON.stringify(files),
+				data: JSON.stringify(files_),
 				colors: promptConfig.style__colors,
 				fonts: promptConfig.style__fontFamilies,
 				font__weight: promptConfig.style__fontWeight.toString(),
