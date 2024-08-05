@@ -13,4 +13,4 @@ Our idea has been to use AI to generate landing pages. What we do is to extract 
 We have done it with great enthusiasm, we have had a spectacular team collaboration, and we have created unforgettable bonds and experiences. We encourage you to access the website we have created and try the functionality for yourself, we hope you like it!
 
 ### URL demo: 🌐
-https://landx-red.vercel.app
+https://land-x.vercel.app
