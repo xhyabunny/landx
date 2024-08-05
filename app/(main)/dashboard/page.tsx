@@ -13,6 +13,7 @@ import { LikeHandler } from "@/components/ui/LikeHandler";
 import FramerCanva from "@/components/ui/FramerCanva";
 import { getPost } from "@/app/api/posts/getPost";
 import { getSession } from "@/app/api/session/getSession";
+import { Button } from "@/components/ui/button";
 
 const POSTS_PER_PAGE = 3;
 
@@ -23,6 +24,7 @@ export default function Page() {
   const [page, setPage] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [type_, setType] = useState<string>('newest');
 
   // Check if running on the client
   const isClient = typeof window !== "undefined";
@@ -58,7 +60,7 @@ export default function Page() {
  
     const fetchPosts = async () => {
       setIsLoading(true);
-      const response = await getPosts("newest", POSTS_PER_PAGE * page);
+      const response = await getPosts(type_, POSTS_PER_PAGE * page);
       const _ = isClient ? await getSession(localStorage.getItem('session')!!) : null;
       const user = _?.sessionInfo ? await getUser(_.sessionInfo!!) : null;
       if (response.result === "done") {
@@ -75,7 +77,7 @@ export default function Page() {
     };
 
     fetchPosts();
-  }, [page]);
+  }, [page, type_]);
 
   const totalPages = Math.ceil(total / POSTS_PER_PAGE);
 
@@ -87,6 +89,14 @@ export default function Page() {
         return "react";
       default: 
         return "";
+    }
+  }
+
+  const handleType = () => {
+    if (type_ === 'newest') {
+      setType('popular')
+    } else {
+      setType('newest')
     }
   }
 
@@ -134,6 +144,7 @@ export default function Page() {
                   {">"}
                 </button>
               </div>
+              <Button className="w-max px-2 m-2 mx-auto" variant={'ghost'} onClick={handleType}>Showing {type_}</Button>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 w-fit mx-auto justify-center items-center">
                 {posts.map((post: any) => (
                   <div
@@ -173,11 +184,11 @@ export default function Page() {
                             <Canva post={post}></Canva>
                           </div>
                           <h2 className="group-hover:mt-1 mt-[-2em] font-black transition-all mix-blend-difference text-white text-lg px-2.5 w-full overflow-hidden whitespace-nowrap group-hover:font-normal">
-                            {truncateText(post.name, 27)}
+                            {truncateText(post.name || 'Unnamed project', 27)}
                           </h2>
                         </div>
                         <div className="h-0 group-hover:h-10 transition-all px-2 mb-1.5 group-hover:mb-[-0.6em] overflow-hidden">
-                          <h3 className="text-xs text-gray-500 px-2.5 p-0">{post.description}</h3>
+                          <h3 className="text-xs text-gray-500 px-2.5 p-0">{post.description || 'Unnamed project from a LANDX User.'}</h3>
                         </div>
                       </div>
                     </div>

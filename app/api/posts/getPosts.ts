@@ -7,7 +7,7 @@ export const getPosts = async (type: string, offset: number) => {
     if (offset > Number(total)) {
       return { result: "done", total: Number(total) };
     } else {
-      let posts = await database.listDocuments("db", "6691dc57001fe88831c7", [Query.limit(3), Query.offset(offset)]);
+      let posts = await database.listDocuments("db", "6691dc57001fe88831c7", [Query.limit(3), Query.offset(offset), type === 'newest' ? Query.orderDesc('$createdAt') : Query.orderDesc('likes')]);
       return { result: "done", info: posts.documents, total: Number(total) };
     }
   } catch (error) {
