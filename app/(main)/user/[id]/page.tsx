@@ -159,7 +159,7 @@ export default function Page() {
     return (
         <div className='mt-28 flex flex-col w-full lg:flex-row lg:w-max mx-auto mb-3'>
             <div className='flex flex-col w-full lg:w-[30vw]'>
-                <div className='flex-col m-3 h-max rounded-xl bg-black/10 dark:bg-white/10 p-5'>
+                <div style={{paddingBottom: isSelf ? '' : '3rem'}} className='flex-col m-3 h-max rounded-xl bg-black/10 dark:bg-white/10 p-5'>
                     <h1 className='text-4xl text-center font-extrabold mt-auto'>{user.$id}{isSelf === true ? ' (You)' : null}</h1>
                     <img src={user.pfp ? user.pfp : "/unknown.png"} className='h-36 w-36 rounded-full mx-auto mt-5'></img>
                     <div className='w-full flex -mt-7 ml-12'>
