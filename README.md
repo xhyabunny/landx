@@ -6,7 +6,7 @@ LandX is a Landing page generator using the Vercel AI SDK made for the Vercel Ha
 Select between colors, fonts, styles, and even tech stacks like react or vanillaJS!
 
 ### Storytelling: 📖
-This project started from scratch on July 9th 2024, the day after Midu announced the Vercel Hackathon on Twitch. We have gathered 8 followers of Midu, where through Telegram we made contact and we got together to carry out this wonderful project.
+This project started from scratch on July 9th 2024, the day after Midu announced the Vercel Hackathon on Twitch. We have gathered 8 followers of Midu, where through Discord we made contact and we got together to carry out this wonderful project.
 
 Our idea has been to use AI to generate landing pages. What we do is to extract the code from the response received by the AI ​​and give it to the user in separate files, ready for use. We have also implemented the embedded Stackblitz SDK to show a demo of the generated landing page.
 
